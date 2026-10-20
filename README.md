@@ -27,8 +27,4 @@ wget --no-check-certificate -O /tmp/luci-app-jodu5164x-status-1.0.0-r3.apk https
 
 ## Telnet login
 
-The ODU connection helper follows login prompts instead of fixed delays. It supports username and password, password-only, and no-login shell modes. Incorrect credentials are reported as a login error. Run `sh tests/run.sh` to exercise the mock ODU cases.
-
-## Telnet login
-
-The ODU connection helper follows login prompts instead of fixed delays. It supports username/password, password-only, and no-login shell modes. Incorrect credentials are reported as a login error. Run `sh tests/run.sh` to exercise the mock ODU cases.
+The ODU Telnet helper detects login prompts, submits the configured username/password, and uses a unique completion marker for command output. Run `sh tests/run.sh` to exercise the mock ODU cases.
