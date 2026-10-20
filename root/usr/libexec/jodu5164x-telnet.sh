@@ -41,7 +41,8 @@ odu_send() { printf '%s\r\n' "$1" >&3; }
 odu_open() {
     ODU_ERR=; _NC=; _SEQ=0
     command -v nc >/dev/null 2>&1 && command -v mkfifo >/dev/null 2>&1 || { ODU_ERR=tools; return 1; }
-    _IN=$ODU_DIR/odu_in.$$; _OUT=$ODU_DIR/odu_out.$$
+    _IN=$ODU_DIR/odu_in.$$
+    _OUT=$ODU_DIR/odu_out.$$
     mkfifo "$_IN" 2>/dev/null || { ODU_ERR=tools; return 1; }
     : > "$_OUT"
     exec 3<> "$_IN"

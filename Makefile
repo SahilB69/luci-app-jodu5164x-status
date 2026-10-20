@@ -29,14 +29,11 @@ endef
 define Package/luci-app-jodu5164x-status/install
 	$(INSTALL_DIR) $(1)/usr/share/luci/menu.d
 	$(INSTALL_DATA) ./root/usr/share/luci/menu.d/luci-app-jodu5164x-status.json $(1)/usr/share/luci/menu.d/
-	
 	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
 	$(INSTALL_DATA) ./root/usr/share/rpcd/acl.d/luci-app-jodu5164x-status.json $(1)/usr/share/rpcd/acl.d/
-	
 	$(INSTALL_DIR) $(1)/www/luci-static/resources/view/jodu5164x
 	$(INSTALL_DATA) ./htdocs/luci-static/resources/view/jodu5164x/status.js $(1)/www/luci-static/resources/view/jodu5164x/
 	$(INSTALL_DATA) ./htdocs/luci-static/resources/view/jodu5164x/jio-logo.png $(1)/www/luci-static/resources/view/jodu5164x/
-	
 	$(INSTALL_DIR) $(1)/usr/libexec
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x-data.sh $(1)/usr/libexec/
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x-setup.sh $(1)/usr/libexec/
@@ -44,7 +41,6 @@ define Package/luci-app-jodu5164x-status/install
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x_at.sh $(1)/usr/libexec/
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x_reboot.sh $(1)/usr/libexec/
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x-telnet.sh $(1)/usr/libexec/
-	
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./root/etc/config/jodu5164x $(1)/etc/config/
 endef
