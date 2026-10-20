@@ -54,10 +54,12 @@ odu_open() {
         _wait "$_any" 4 || { if [ -s "$_OUT" ]; then ODU_ERR=nodata; else ODU_ERR=unreachable; fi; return 1; }
     fi
     if _clean | grep -qE 'ogin:'; then
+        : > "$_OUT"
         odu_send "${ODU_USER:-root}"
         _wait 'assword:|ogin:|[#$] *$' 4 || true
     fi
     if _clean | grep -qE 'assword:'; then
+        : > "$_OUT"
         odu_send "$ODU_PASS"
         _wait '[#$] *$|ogin:|assword:' 6 || true
     fi
