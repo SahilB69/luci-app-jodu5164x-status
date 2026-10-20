@@ -66,7 +66,7 @@ odu_open() {
 odu_cmd() {
 	_SEQ=$((_SEQ + 1)); _m="ODU_DONE_$$_$_SEQ"
 	: > "$_OUT"; odu_send "$1; echo $_m"
-	if _wait "^${_m\}\$" "${2:-10}"; then _rc=0; else _rc=1; fi
+	if _wait "^${_m}$" "${2:-10}"; then _rc=0; else _rc=1; fi
 	ODU_OUT=$(_clean | awk -v m="$_m" 'index($0, m) && $0 != m { next } $0 == m { exit } { print }')
 	return $_rc
 }
