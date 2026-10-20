@@ -43,6 +43,7 @@ define Package/luci-app-jodu5164x-status/install
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x_lock.sh $(1)/usr/libexec/
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x_at.sh $(1)/usr/libexec/
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x_reboot.sh $(1)/usr/libexec/
+	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x-reboot.sh $(1)/usr/libexec/
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x-telnet.sh $(1)/usr/libexec/
 	
 	$(INSTALL_DIR) $(1)/etc/config
