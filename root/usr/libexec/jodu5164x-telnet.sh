@@ -61,7 +61,7 @@ odu_open() {
 		_wait "$ODU_PROMPT|ogin: *\\$|assword: *\\$" 6 last
 	fi
 	if _match 'ogin: *$|assword: *$' || _clean | grep -qi 'incorrect'; then ODU_ERR=auth; return 1; fi
-	_match "$ODU_PROMPT" || odu_cmd true 5 || { ODU_ERR=auth; return 1; }
+	_match "$ODU_PROMPT" || { ODU_ERR=auth; return 1; }
 	return 0
 }
 odu_cmd() {
