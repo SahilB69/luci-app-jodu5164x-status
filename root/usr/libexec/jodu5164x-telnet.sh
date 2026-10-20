@@ -47,20 +47,20 @@ odu_open() {
 	exec 3<> "$_IN"
 	nc "$ODU_IP" "$ODU_PORT" < "$_IN" >> "$_OUT" 2>/dev/null &
 	_NC=$!
-	_any="ogin: *\$|assword: *\$|$ODU_PROMPT"
+	_any="ogin: *\\$|assword: *\\$|$ODU_PROMPT"
 	if ! _wait "$_any" 3 last; then
 		odu_send ''
 		_wait "$_any" 4 last || { if [ -s "$_OUT" ]; then ODU_ERR=nodata; else ODU_ERR=unreachable; fi; return 1; }
 	fi
-	if _match 'ogin: *
+	if _match 'ogin: *$'; then
 		: > "$_OUT"; odu_send "${ODU_USER:-root}"
-		_wait "assword: *\$|ogin: *\$|$ODU_PROMPT" 4 last
+		_wait "assword: *\\$|ogin: *\\$|$ODU_PROMPT" 4 last
 	fi
-	if _match 'assword: *
+	if _match 'assword: *$'; then
 		: > "$_OUT"; odu_send "$ODU_PASS"
-		_wait "$ODU_PROMPT|ogin: *\$|assword: *\$" 6 last
+		_wait "$ODU_PROMPT|ogin: *\\$|assword: *\\$" 6 last
 	fi
-	if _match 'ogin: *$|assword: *
+	if _match 'ogin: *$|assword: *$' || _clean | grep -qi 'incorrect'; then ODU_ERR=auth; return 1; fi
 	_match "$ODU_PROMPT" || odu_cmd true 5 || { ODU_ERR=auth; return 1; }
 	return 0
 }
