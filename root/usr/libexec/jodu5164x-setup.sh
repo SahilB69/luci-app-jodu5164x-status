@@ -81,7 +81,7 @@ payload_monitor() {
     echo "        sleep 2"
     echo "    done"
     echo ") &"
-    echo "\$! >> /tmp/odu_monitor.pid"
+    echo "echo \$! >> /tmp/odu_monitor.pid"
     echo ""
     echo "wait"
     echo "EOF"
