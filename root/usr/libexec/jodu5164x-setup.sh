@@ -42,7 +42,7 @@ payload_monitor() {
     echo "        sleep 10"
     echo "    done"
     echo ") &"
-    echo "\$! >> /tmp/odu_monitor.pid"
+    echo "echo \$! >> /tmp/odu_monitor.pid"
     echo ""
     echo "("
     echo "    while true; do"
