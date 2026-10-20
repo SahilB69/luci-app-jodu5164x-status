@@ -5,6 +5,7 @@ command -v python3 >/dev/null 2>&1 || { echo "python3 is required" >&2; exit 77;
 command -v busybox >/dev/null 2>&1 || { echo "busybox is required" >&2; exit 77; }
 TMP=$(mktemp -d)
 PID=
+PORT=
 cleanup() {
     [ -z "$PID" ] || kill "$PID" 2>/dev/null || true
     rm -rf "$TMP"
@@ -14,15 +15,19 @@ export PATH="$ROOT/tests/bin:$PATH"
 export ODU_LIB="$ROOT/root/usr/libexec/jodu5164x-telnet.sh"
 export ODU_TMPDIR="$TMP"
 export TEST_ODU_IP=127.0.0.1
-export TEST_ODU_PORT=2323
 export TEST_ODU_USER=root
 export TEST_ODU_PASS=secret
 
+free_port() {
+    python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1]); s.close()'
+}
 run_case() {
     mode="$1"
+    TEST_ODU_PORT=$(free_port)
+    export TEST_ODU_PORT
     python3 "$ROOT/tests/odu_mock.py" --mode "$mode" --port "$TEST_ODU_PORT" &
     PID=$!
-    sleep 1
+    sleep 0.3
     if [ "$mode" = wrongpass ]; then
         if busybox sh -c '. "$ODU_LIB"; odu_config; odu_open'; then
             echo "expected wrong-password case to fail" >&2
