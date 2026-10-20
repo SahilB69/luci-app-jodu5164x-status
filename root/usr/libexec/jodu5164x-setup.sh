@@ -7,7 +7,6 @@ done
 touch /tmp/odu5164x_setup.lock
 trap 'odu_close; rm -f /tmp/odu5164x_setup.lock' EXIT INT TERM
 odu_config
-pkill -9 -f "nc $ODU_IP $ODU_PORT" 2>/dev/null
 NR_ARFCN=$(uci -q get jodu5164x.main.arfcn)
 NR_PCI=$(uci -q get jodu5164x.main.pci)
 payload_kill() {
