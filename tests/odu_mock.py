@@ -2,13 +2,12 @@
 """Tiny mock telnet ODU for testing prompt-driven authentication."""
 import argparse
 import socketserver
-import threading
 
 class Handler(socketserver.StreamRequestHandler):
     def handle(self):
         mode = self.server.mode
         if mode in ("userpass", "wrongpass"):
-            self.wfile.write(b"jioodu login: ")
+            self.wfile.write(b"QTI Linux reference banner\r\njioodu login: ")
             user = self.rfile.readline().strip()
             if user != b"root":
                 self.wfile.write(b"Login incorrect\r\njioodu login: ")
