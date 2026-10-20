@@ -41,8 +41,7 @@ odu_send() { printf '%s\r\n' "$1" >&3; }
 odu_open() {
     ODU_ERR=; _NC=; _SEQ=0
     command -v nc >/dev/null 2>&1 && command -v mkfifo >/dev/null 2>&1 || { ODU_ERR=tools; return 1; }
-    _IN=$ODU_DIR/odu_in.$$
-    _OUT=$ODU_DIR/odu_out.$$
+    _IN=$ODU_DIR/odu_in.$$; _OUT=$ODU_DIR/odu_out.$$
     mkfifo "$_IN" 2>/dev/null || { ODU_ERR=tools; return 1; }
     : > "$_OUT"
     exec 3<> "$_IN"
@@ -54,13 +53,11 @@ odu_open() {
         _wait "$_any" 4 || { if [ -s "$_OUT" ]; then ODU_ERR=nodata; else ODU_ERR=unreachable; fi; return 1; }
     fi
     if _clean | grep -qE 'ogin:'; then
-        : > "$_OUT"
-        odu_send "${ODU_USER:-root}"
+        : > "$_OUT"; odu_send "${ODU_USER:-root}"
         _wait 'assword:|ogin:|[#$] *$' 4 || true
     fi
     if _clean | grep -qE 'assword:'; then
-        : > "$_OUT"
-        odu_send "$ODU_PASS"
+        : > "$_OUT"; odu_send "$ODU_PASS"
         _wait '[#$] *$|ogin:|assword:' 6 || true
     fi
     if _clean | grep -qE 'ogin:|assword:|incorrect'; then ODU_ERR=auth; return 1; fi
