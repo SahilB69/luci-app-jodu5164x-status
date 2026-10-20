@@ -9,6 +9,7 @@ _now() { read -r _up _ < /proc/uptime; _NOW=${_up%%.*}; }
 _nap() { sleep 0.2 2>/dev/null || sleep 1; }
 _clean() { tr -cd '\11\12\40-\176' < "$_OUT"; }
 _last() { _clean | tail -n 1; }
+_match() { _clean | grep -qE "$1"; }
 _wait() {
 	_now; _end=$((_NOW + $2))
 	while :; do
@@ -51,7 +52,173 @@ odu_open() {
 		odu_send ''
 		_wait "$_any" 4 last || { if [ -s "$_OUT" ]; then ODU_ERR=nodata; else ODU_ERR=unreachable; fi; return 1; }
 	fi
-	if _last | grep -qE 'ogin: *$'; then
+	if _match 'ogin: *
+		: > "$_OUT"; odu_send "${ODU_USER:-root}"
+		_wait "assword: *\$|ogin: *\$|$ODU_PROMPT" 4 last
+	fi
+	if _match 'assword: *
+		: > "$_OUT"; odu_send "$ODU_PASS"
+		_wait "$ODU_PROMPT|ogin: *\$|assword: *\$" 6 last
+	fi
+	if _match 'ogin: *$|assword: *
+	_match "$ODU_PROMPT" || odu_cmd true 5 || { ODU_ERR=auth; return 1; }
+	return 0
+}
+odu_cmd() {
+	_SEQ=$((_SEQ + 1)); _m="ODU_DONE_$$_$_SEQ"
+	: > "$_OUT"; odu_send "$1; echo $_m"
+	if _wait "^${_m}$" "${2:-10}"; then _rc=0; else _rc=1; fi
+	ODU_OUT=$(_clean | awk -v m="$_m" 'index($0, m) && $0 != m { next } $0 == m { exit } { print }')
+	return $_rc
+}
+odu_close() {
+	[ -n "$_NC" ] || return 0
+	odu_send exit 2>/dev/null; _nap
+	exec 3>&-
+	kill "$_NC" 2>/dev/null; wait "$_NC" 2>/dev/null
+	rm -f "$_IN" "$_OUT"; _NC=
+}
+; then
+		: > "$_OUT"; odu_send "${ODU_USER:-root}"
+		_wait "assword: *\$|ogin: *\$|$ODU_PROMPT" 4 last
+	fi
+	if _last | grep -qE 'assword: *$'; then
+		: > "$_OUT"; odu_send "$ODU_PASS"
+		_wait "$ODU_PROMPT|ogin: *\$|assword: *\$" 6 last
+	fi
+	if _last | grep -qE 'ogin: *$|assword: *$' || _clean | grep -qi 'incorrect'; then ODU_ERR=auth; return 1; fi
+	_last | grep -qE "$ODU_PROMPT" || odu_cmd true 5 || { ODU_ERR=auth; return 1; }
+	return 0
+}
+odu_cmd() {
+	_SEQ=$((_SEQ + 1)); _m="ODU_DONE_$$_$_SEQ"
+	: > "$_OUT"; odu_send "$1; echo $_m"
+	if _wait "^${_m}$" "${2:-10}"; then _rc=0; else _rc=1; fi
+	ODU_OUT=$(_clean | awk -v m="$_m" 'index($0, m) && $0 != m { next } $0 == m { exit } { print }')
+	return $_rc
+}
+odu_close() {
+	[ -n "$_NC" ] || return 0
+	odu_send exit 2>/dev/null; _nap
+	exec 3>&-
+	kill "$_NC" 2>/dev/null; wait "$_NC" 2>/dev/null
+	rm -f "$_IN" "$_OUT"; _NC=
+}
+; then
+		: > "$_OUT"; odu_send "$ODU_PASS"
+		_wait "$ODU_PROMPT|ogin: *\$|assword: *\$" 6 last
+	fi
+	if _last | grep -qE 'ogin: *$|assword: *$' || _clean | grep -qi 'incorrect'; then ODU_ERR=auth; return 1; fi
+	_last | grep -qE "$ODU_PROMPT" || odu_cmd true 5 || { ODU_ERR=auth; return 1; }
+	return 0
+}
+odu_cmd() {
+	_SEQ=$((_SEQ + 1)); _m="ODU_DONE_$$_$_SEQ"
+	: > "$_OUT"; odu_send "$1; echo $_m"
+	if _wait "^${_m}$" "${2:-10}"; then _rc=0; else _rc=1; fi
+	ODU_OUT=$(_clean | awk -v m="$_m" 'index($0, m) && $0 != m { next } $0 == m { exit } { print }')
+	return $_rc
+}
+odu_close() {
+	[ -n "$_NC" ] || return 0
+	odu_send exit 2>/dev/null; _nap
+	exec 3>&-
+	kill "$_NC" 2>/dev/null; wait "$_NC" 2>/dev/null
+	rm -f "$_IN" "$_OUT"; _NC=
+}
+; then
+		: > "$_OUT"; odu_send "${ODU_USER:-root}"
+		_wait "assword: *\$|ogin: *\$|$ODU_PROMPT" 4 last
+	fi
+	if _last | grep -qE 'assword: *$'; then
+		: > "$_OUT"; odu_send "$ODU_PASS"
+		_wait "$ODU_PROMPT|ogin: *\$|assword: *\$" 6 last
+	fi
+	if _last | grep -qE 'ogin: *$|assword: *$' || _clean | grep -qi 'incorrect'; then ODU_ERR=auth; return 1; fi
+	_last | grep -qE "$ODU_PROMPT" || odu_cmd true 5 || { ODU_ERR=auth; return 1; }
+	return 0
+}
+odu_cmd() {
+	_SEQ=$((_SEQ + 1)); _m="ODU_DONE_$$_$_SEQ"
+	: > "$_OUT"; odu_send "$1; echo $_m"
+	if _wait "^${_m}$" "${2:-10}"; then _rc=0; else _rc=1; fi
+	ODU_OUT=$(_clean | awk -v m="$_m" 'index($0, m) && $0 != m { next } $0 == m { exit } { print }')
+	return $_rc
+}
+odu_close() {
+	[ -n "$_NC" ] || return 0
+	odu_send exit 2>/dev/null; _nap
+	exec 3>&-
+	kill "$_NC" 2>/dev/null; wait "$_NC" 2>/dev/null
+	rm -f "$_IN" "$_OUT"; _NC=
+}
+ || _clean | grep -qi 'incorrect'; then ODU_ERR=auth; return 1; fi
+	_last | grep -qE "$ODU_PROMPT" || odu_cmd true 5 || { ODU_ERR=auth; return 1; }
+	return 0
+}
+odu_cmd() {
+	_SEQ=$((_SEQ + 1)); _m="ODU_DONE_$$_$_SEQ"
+	: > "$_OUT"; odu_send "$1; echo $_m"
+	if _wait "^${_m}$" "${2:-10}"; then _rc=0; else _rc=1; fi
+	ODU_OUT=$(_clean | awk -v m="$_m" 'index($0, m) && $0 != m { next } $0 == m { exit } { print }')
+	return $_rc
+}
+odu_close() {
+	[ -n "$_NC" ] || return 0
+	odu_send exit 2>/dev/null; _nap
+	exec 3>&-
+	kill "$_NC" 2>/dev/null; wait "$_NC" 2>/dev/null
+	rm -f "$_IN" "$_OUT"; _NC=
+}
+; then
+		: > "$_OUT"; odu_send "${ODU_USER:-root}"
+		_wait "assword: *\$|ogin: *\$|$ODU_PROMPT" 4 last
+	fi
+	if _last | grep -qE 'assword: *$'; then
+		: > "$_OUT"; odu_send "$ODU_PASS"
+		_wait "$ODU_PROMPT|ogin: *\$|assword: *\$" 6 last
+	fi
+	if _last | grep -qE 'ogin: *$|assword: *$' || _clean | grep -qi 'incorrect'; then ODU_ERR=auth; return 1; fi
+	_last | grep -qE "$ODU_PROMPT" || odu_cmd true 5 || { ODU_ERR=auth; return 1; }
+	return 0
+}
+odu_cmd() {
+	_SEQ=$((_SEQ + 1)); _m="ODU_DONE_$$_$_SEQ"
+	: > "$_OUT"; odu_send "$1; echo $_m"
+	if _wait "^${_m}$" "${2:-10}"; then _rc=0; else _rc=1; fi
+	ODU_OUT=$(_clean | awk -v m="$_m" 'index($0, m) && $0 != m { next } $0 == m { exit } { print }')
+	return $_rc
+}
+odu_close() {
+	[ -n "$_NC" ] || return 0
+	odu_send exit 2>/dev/null; _nap
+	exec 3>&-
+	kill "$_NC" 2>/dev/null; wait "$_NC" 2>/dev/null
+	rm -f "$_IN" "$_OUT"; _NC=
+}
+; then
+		: > "$_OUT"; odu_send "$ODU_PASS"
+		_wait "$ODU_PROMPT|ogin: *\$|assword: *\$" 6 last
+	fi
+	if _last | grep -qE 'ogin: *$|assword: *$' || _clean | grep -qi 'incorrect'; then ODU_ERR=auth; return 1; fi
+	_last | grep -qE "$ODU_PROMPT" || odu_cmd true 5 || { ODU_ERR=auth; return 1; }
+	return 0
+}
+odu_cmd() {
+	_SEQ=$((_SEQ + 1)); _m="ODU_DONE_$$_$_SEQ"
+	: > "$_OUT"; odu_send "$1; echo $_m"
+	if _wait "^${_m}$" "${2:-10}"; then _rc=0; else _rc=1; fi
+	ODU_OUT=$(_clean | awk -v m="$_m" 'index($0, m) && $0 != m { next } $0 == m { exit } { print }')
+	return $_rc
+}
+odu_close() {
+	[ -n "$_NC" ] || return 0
+	odu_send exit 2>/dev/null; _nap
+	exec 3>&-
+	kill "$_NC" 2>/dev/null; wait "$_NC" 2>/dev/null
+	rm -f "$_IN" "$_OUT"; _NC=
+}
+; then
 		: > "$_OUT"; odu_send "${ODU_USER:-root}"
 		_wait "assword: *\$|ogin: *\$|$ODU_PROMPT" 4 last
 	fi
