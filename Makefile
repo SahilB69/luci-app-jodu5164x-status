@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-jodu5164x-status
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 PKG_LICENSE:=GPL-3.0
 
 include $(INCLUDE_DIR)/package.mk
@@ -12,7 +12,7 @@ define Package/luci-app-jodu5164x-status
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
   TITLE:=LuCI support for JODU5164x
-  DEPENDS:=+luci-base +wget +telnet-bsd +luci-compat
+  DEPENDS:=+luci-base +wget +luci-compat
   PKGARCH:=all
 endef
 
@@ -43,6 +43,7 @@ define Package/luci-app-jodu5164x-status/install
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x_lock.sh $(1)/usr/libexec/
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x_at.sh $(1)/usr/libexec/
 	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x_reboot.sh $(1)/usr/libexec/
+	$(INSTALL_BIN) ./root/usr/libexec/jodu5164x-telnet.sh $(1)/usr/libexec/
 	
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./root/etc/config/jodu5164x $(1)/etc/config/
