@@ -31,3 +31,10 @@ prompts instead of sleeping: `login:` gets the Telnet Username (default `root`),
 the Telnet Password, and with neither set it just presses Enter. A wrong login is reported
 ("Telnet login failed") instead of failing silently. `tests/run.sh` checks all variants against a
 mock ODU (needs busybox and python3).
+
+## Telnet login
+
+The ODU connection helper follows login prompts instead of relying on fixed delays.
+It supports login with username and password, password-only login, and shells that
+do not require credentials. Incorrect credentials are surfaced as a login error.
+Run `tests/run.sh` to exercise the login cases with the mock ODU.
