@@ -1,7 +1,7 @@
 #!/bin/sh
-# jodu5164x-telnet.sh - prompt-aware connection helper for the ODU.
+# Prompt-aware Telnet helper for the JODU5164x ODU.
 # Supports no login, password-only login, and username/password login.
-# ODU_ERR values: unreachable | auth | nodata | tools
+# ODU_ERR: unreachable | auth | nodata | tools
 PATH=$PATH:/sbin:/usr/sbin
 ODU_DIR=${ODU_TMPDIR:-/tmp}
 _now() { read -r _up _ < /proc/uptime; _NOW=${_up%%.*}; }
