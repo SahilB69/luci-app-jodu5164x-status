@@ -47,21 +47,21 @@ odu_open() {
 	exec 3<> "$_IN"
 	nc "$ODU_IP" "$ODU_PORT" < "$_IN" >> "$_OUT" 2>/dev/null &
 	_NC=$!
-	_any="ogin: *$|assword: *$|$ODU_PROMPT"
-	if ! _wait "$_any" 3 last; then
+	_any='ogin:|assword:|(^|[^#$])[#$] *$'
+	if ! _wait "$_any" 3; then
 		odu_send ''
-		_wait "$_any" 4 last || { if [ -s "$_OUT" ]; then ODU_ERR=nodata; else ODU_ERR=unreachable; fi; return 1; }
+		_wait "$_any" 4 || { if [ -s "$_OUT" ]; then ODU_ERR=nodata; else ODU_ERR=unreachable; fi; return 1; }
 	fi
-	if _match 'ogin: *$'; then
-		: > "$_OUT"; odu_send "${ODU_USER:-root}"
-		_wait "assword: *$|ogin: *$|$ODU_PROMPT" 4 last
+	if _clean | grep -qE 'ogin:'; then
+		odu_send "${ODU_USER:-root}"
+		_wait 'assword:|ogin:|(^|[^#$])[#$] *$' 4 || true
 	fi
-	if _match 'assword: *$'; then
-		: > "$_OUT"; odu_send "$ODU_PASS"
-		_wait "$ODU_PROMPT|ogin: *$|assword: *$" 6 last
+	if _clean | grep -qE 'assword:'; then
+		odu_send "$ODU_PASS"
+		_wait '(^|[^#$])[#$] *$|ogin:|assword:' 6 || true
 	fi
-	if _match 'ogin: *$|assword: *$' || _clean | grep -qi 'incorrect'; then ODU_ERR=auth; return 1; fi
-	_match "$ODU_PROMPT" || { ODU_ERR=auth; return 1; }
+	if _clean | grep -qE 'ogin:|assword:|incorrect'; then ODU_ERR=auth; return 1; fi
+	_clean | grep -qE '(^|[^#$])[#$] *$' || { ODU_ERR=auth; return 1; }
 	return 0
 }
 odu_cmd() {
