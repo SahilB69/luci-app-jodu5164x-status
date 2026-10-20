@@ -1,0 +1,12 @@
+#!/bin/sh
+# Minimal UCI stub for the Telnet helper tests.
+case "$*" in
+  "-q get jodu5164x.main.ip") echo "${TEST_ODU_IP:-127.0.0.1}" ;;
+  "-q get jodu5164x.main.host") echo "" ;;
+  "-q get jodu5164x.main.telnet_port") echo "${TEST_ODU_PORT:-2323}" ;;
+  "-q get jodu5164x.main.user") echo "${TEST_ODU_USER:-root}" ;;
+  "-q get jodu5164x.main.telnet_username") echo "" ;;
+  "-q get jodu5164x.main.pass") echo "${TEST_ODU_PASS:-secret}" ;;
+  "-q get jodu5164x.main.telnet_password") echo "" ;;
+  *) exit 1 ;;
+esac
